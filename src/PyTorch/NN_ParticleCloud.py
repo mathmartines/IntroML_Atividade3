@@ -1,4 +1,4 @@
-from src.EdgeConvLayer import EdgeConvLayer
+from src.PyTorch.EdgeConvLayer import EdgeConvLayer
 from torch import nn
 import torch
 
@@ -12,8 +12,6 @@ class ParticleCloud(nn.Module):
         self._mlp = nn.Sequential(
             # one layer with 12 input parameters (6 features per particle)
             nn.Linear(in_features=12, out_features=32),
-            nn.ReLU(),
-            nn.Linear(in_features=32, out_features=32),
             nn.ReLU(),
             nn.Linear(in_features=32, out_features=32),
             nn.ReLU()

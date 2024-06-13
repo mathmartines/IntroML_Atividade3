@@ -36,7 +36,7 @@ class HiggsDataset(Dataset):
 
     def __init__(self, file_path: str, device):
         self._higgs_dataset = pd.read_csv(file_path, header=None).to_numpy()
-        self._particles_features = ["pt", "eta", "phi", "isLepton", "isNeutrino", "isJet"]
+        self._particles_features = ["pt", "eta", "phi", "btag", "isLepton", "isNeutrino", "isJet"]
         self._device = device
 
     def __len__(self):
@@ -70,14 +70,14 @@ class HiggsDataset(Dataset):
 
     def _construct_jets_features(self, event_info: np.ndarray):
         """Constructs the features for each of the jets in the event"""
-        number_jets = int(len(event_info[5:]) / 4)
+        number_jets = 4
         jets_features = np.empty(shape=(number_jets, len(self._particles_features)), dtype=np.float32)
         for jet_index in range(number_jets):
             # the first three indices of each jet represents the momentum
             jet_momentum = event_info[5 + 4 * jet_index: 5 + 4 * jet_index + 3]
             # the last index tells if the jet is from a b or not
-            # tags = ["isJet", "btag"] if event_info[5 + 4 * jet_index + 3] - 1 > 0 else ["isJet"]
-            jets_features[jet_index] = self._initialize_particle_features(jet_momentum, "isJet")
+            tags = ["isJet", "btag"] if event_info[5 + 4 * jet_index + 3] > 1 else ["isJet"]
+            jets_features[jet_index] = self._initialize_particle_features(jet_momentum, *tags)
         return jets_features
 
     def _construct_nu_features(self, event_info: np.ndarray):

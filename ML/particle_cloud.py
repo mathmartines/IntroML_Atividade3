@@ -1,15 +1,15 @@
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from src.HiggsDataset import HiggsDataset
-from src.Trainning import train_loop, test_loop
-from src.NN_ParticleCloud import ParticleCloud
+from src.PyTorch.HiggsDataset import HiggsDataset
+from src.PyTorch.Trainning import train_loop, test_loop
+from src.PyTorch.NN_ParticleCloud import ParticleCloud
 
 if __name__ == "__main__":
     device = "cpu"
 
-    higges_trainning = HiggsDataset("Data/HiggsTrainning.csv", device)
-    higgs_validation = HiggsDataset("Data/HiggsValidation.csv", device)
+    higges_trainning = HiggsDataset("../Data/HiggsTrainning.csv", device)
+    higgs_validation = HiggsDataset("../Data/HiggsValidation.csv", device)
 
     particle_cloud = ParticleCloud().to(device)
 
