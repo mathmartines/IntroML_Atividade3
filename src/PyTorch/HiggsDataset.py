@@ -88,15 +88,6 @@ class HiggsDataset(Dataset):
         """
         # lepton_pt, lepton_eta, lepton_phi = event_info[:3]
         missing_energy, missing_energy_phi = event_info[3:5]
-        # mass_lepton_neutrino = event_info[-4]
-        # evaluating the delta
-        # transverse_mass = np.sqrt(2 * lepton_pt * missing_energy * (1 - np.cos(lepton_phi - missing_energy_phi)))
-        # print(mass_lepton_neutrino**2 - transverse_mass**2)
-        # delta = np.sqrt((mass_lepton_neutrino**2 - transverse_mass**2) / (2 * lepton_pt * missing_energy))
-        # # neutrino pseudo-rapidity
-        # eta_nu_plus = lepton_eta + np.log(1 + delta * np.sqrt(2 + delta**2) + delta**2)
-        # eta_nu_minus = lepton_eta - np.log(1 + delta * np.sqrt(2 + delta ** 2) + delta ** 2)
-        # eta_nu = eta_nu_plus if abs(eta_nu_plus < eta_nu_minus) else eta_nu_minus
         # neutrino momentum
         nu_momentum = np.array([missing_energy, 0, missing_energy_phi], dtype=np.float32)
         return np.array([self._initialize_particle_features(nu_momentum, "isNeutrino")])
