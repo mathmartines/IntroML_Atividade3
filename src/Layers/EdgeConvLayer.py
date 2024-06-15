@@ -1,4 +1,5 @@
 import tensorflow as tf
+import keras
 
 
 class EdgeConvLayer(tf.keras.layers.Layer):
@@ -9,12 +10,13 @@ class EdgeConvLayer(tf.keras.layers.Layer):
 
     def __init__(self,
                  mlp,
+                 mlp_output_dim,
                  k_neighbors: int, coord_index, **kwargs):
         super().__init__(**kwargs)
         self._k_neighbors = k_neighbors
         self._initial_coord, self._final_coord = coord_index
         self._mlp = mlp
-        self._mlp_output_dim = mlp.output_shape[-1]
+        self._mlp_output_dim = mlp_output_dim
 
     def call(self, events):
         """Evaluates the ModelFiles in each edge of all particle clouds."""
@@ -82,3 +84,18 @@ class EdgeConvLayer(tf.keras.layers.Layer):
         batch_size, number_of_particles = input_shape[0], input_shape[1]
         return batch_size, number_of_particles, self._mlp_output_dim
 
+    def get_config(self):
+        base_config = super().get_config()
+        config = {
+            "mlp": keras.saving.serialize_keras_object(self._mlp),
+            "mlp_output_dim": self._mlp_output_dim,
+            "k_neighbors": self._k_neighbors,
+            "coord_index": (self._initial_coord, self._final_coord)
+        }
+        return {**base_config, **config}
+
+    @classmethod
+    def from_config(cls, config):
+        mlp = config.pop("mlp")
+        mlp = keras.saving.deserialize_keras_object(mlp)
+        return cls(mlp, **config)

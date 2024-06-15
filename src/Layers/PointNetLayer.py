@@ -1,4 +1,6 @@
 import tensorflow as tf
+import keras
+
 
 class PointNetLayer(tf.keras.layers.Layer):
     """
@@ -6,10 +8,10 @@ class PointNetLayer(tf.keras.layers.Layer):
     with a new set of features giveb by the output of the ModelFiles.
     """
 
-    def __init__(self, mlp, **kwargs):
+    def __init__(self, mlp, mlp_output_dim, **kwargs):
         super().__init__(**kwargs)
         self._mlp = mlp
-        self._mlp_output_dim = mlp.output_shape[-1]
+        self._mlp_output_dim = mlp_output_dim
 
     def compute_output_shape(self, input_shape):
         """For each sample the output shape is (number of particles, number of features from the ModelFiles)"""
@@ -30,3 +32,17 @@ class PointNetLayer(tf.keras.layers.Layer):
         mlp_output = self._mlp(all_particles)
         # the last step is to reshape it again in the of (events, particles, output of the ModelFiles)
         return tf.reshape(mlp_output, (number_of_evts, number_of_particles_per_evt, self._mlp_output_dim))
+
+    def get_config(self):
+        base_config = super().get_config()
+        config = {
+            "_mlp": keras.saving.serialize_keras_object(self._mlp),
+            "mlp_output_dim": self._mlp_output_dim
+        }
+        return {**base_config, **config}
+
+    @classmethod
+    def from_config(cls, config):
+        mlp = config.pop("_mlp")
+        mlp = keras.saving.deserialize_keras_object(mlp)
+        return cls(mlp, **config)

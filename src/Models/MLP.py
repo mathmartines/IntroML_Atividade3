@@ -12,6 +12,7 @@ class MLP(keras.Model):
 
     def __init__(self, num_neurons, **kwargs):
         super().__init__(**kwargs)
+        self.num_neurons = num_neurons
         # first layer
         self.first_transf = keras.layers.Dense(num_neurons)
         self.first_batch_norm = keras.layers.BatchNormalization()
@@ -40,3 +41,14 @@ class MLP(keras.Model):
         output_third_layer = self.third_batch_norm(output_third_layer)
 
         return self.third_relu(output_third_layer)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            'num_neurons': self.num_neurons
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
