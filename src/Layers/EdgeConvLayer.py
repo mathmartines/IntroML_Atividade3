@@ -1,38 +1,6 @@
 import tensorflow as tf
 
 
-class PointNetLayer(tf.keras.layers.Layer):
-    """
-    For each particle in the event, it evaluates the MLP and returns the same particle
-    with a new set of features giveb by the output of the MLP.
-    """
-
-    def __init__(self, mlp, **kwargs):
-        super().__init__(**kwargs)
-        self._mlp = mlp
-        self._mlp_output_dim = mlp.output_shape[-1]
-
-    def compute_output_shape(self, input_shape):
-        """For each sample the output shape is (number of particles, number of features from the MLP)"""
-        batch_size = input_shape[0]
-        number_of_particles = input_shape[1]
-        return batch_size, number_of_particles, self._mlp_output_dim
-
-    def call(self, events):
-        """Evaluates the MLP in each particle in all events"""
-        # number of events (batch size) and number of particles per event
-        number_of_evts = tf.shape(events)[0]
-        number_of_particles_per_evt = tf.shape(events)[1]
-        number_of_particles_features = tf.shape(events)[2]
-        # we need to reshape in a way that we only have a list of particles
-        all_particles = tf.reshape(events, (number_of_particles_per_evt * number_of_evts, number_of_particles_features))
-
-        # now we need to apply the MLP in all the particles
-        mlp_output = self._mlp(all_particles)
-        # the last step is to reshape it again in the of (events, particles, output of the MLP)
-        return tf.reshape(mlp_output, (number_of_evts, number_of_particles_per_evt, self._mlp_output_dim))
-
-
 class EdgeConvLayer(tf.keras.layers.Layer):
     """
     Edge Convolution Layer for the Particle Cloud NN.
@@ -49,7 +17,7 @@ class EdgeConvLayer(tf.keras.layers.Layer):
         self._mlp_output_dim = mlp.output_shape[-1]
 
     def call(self, events):
-        """Evaluates the MLP in each edge of all particle clouds."""
+        """Evaluates the ModelFiles in each edge of all particle clouds."""
         batch_size = tf.shape(events)[0]
         number_of_particles = tf.shape(events)[1]
         number_of_particles_features = tf.shape(events)[2]
@@ -63,10 +31,10 @@ class EdgeConvLayer(tf.keras.layers.Layer):
                                        [batch_size, number_of_particles, self._k_neighbors,
                                         number_of_particles_features])
         edge_features = tf.concat([central_particles, neighbors - central_particles], axis=-1)
-        # now we need to reshape it in a that's acceptable by the MLP
+        # now we need to reshape it in a that's acceptable by the ModelFiles
         total_edges = batch_size * number_of_particles * self._k_neighbors
         edge_features = tf.reshape(edge_features, [total_edges, 2 * number_of_particles_features])
-        # applying the MLP to every edge
+        # applying the ModelFiles to every edge
         mlp_output = self._mlp(edge_features)
         # reshape again into events as set of particles
         mlp_output = tf.reshape(mlp_output, [batch_size, number_of_particles, self._k_neighbors, self._mlp_output_dim])
@@ -114,13 +82,3 @@ class EdgeConvLayer(tf.keras.layers.Layer):
         batch_size, number_of_particles = input_shape[0], input_shape[1]
         return batch_size, number_of_particles, self._mlp_output_dim
 
-
-class ChannelWiseGlobalAveragePooling(tf.keras.layers.Layer):
-
-    def call(self, events):
-        """Returns the feature-wise avarage over all the particles in the event"""
-        return tf.reduce_mean(events, axis=1)
-
-    def compute_output_shape(self, input_shape):
-        batch_size, particles_features = input_shape[0], input_shape[-1]
-        return batch_size, particles_features

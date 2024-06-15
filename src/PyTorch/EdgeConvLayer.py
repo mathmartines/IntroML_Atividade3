@@ -15,8 +15,8 @@ class EdgeConvLayer(torch.nn.Module):
 
     def forward(self, events: torch.Tensor) -> torch.Tensor:
         """
-        The EdgeConvLayer applies the MLP for each edge in the ParticleCloud,
-        and takes a channel-wise avarage over the outputs of the MLP. The
+        The EdgeConvLayer applies the ModelFiles for each edge in the ParticleCloud,
+        and takes a channel-wise avarage over the outputs of the ModelFiles. The
         avarage over all the edges represents the new set of features for the particle.
         An edge represents the particle and its neighbor features. The number of edges is equal
         to the number of neighbors (k-neighbors).
@@ -31,14 +31,14 @@ class EdgeConvLayer(torch.nn.Module):
         output_particles = torch.empty(size=(particles_number, self._mlp_output_shape), dtype=torch.float32)
 
         # particle cloud for the current particle
-        # it will store the output of the MLP for each edge
+        # it will store the output of the ModelFiles for each edge
         particle_cloud = torch.empty(size=(self._k_neighbors, self._mlp_output_shape), dtype=torch.float32)
 
         # for each particle in the event we must find the particle cloud
         # that is, its k-closest neighbors
         for particle_index in range(particles_number):
             for index_cloud, neighbor_index in enumerate(self._find_neighbors(particle_index, event)):
-                # setting up the right features for the MLP
+                # setting up the right features for the ModelFiles
                 particle, neighbor = event[particle_index], event[neighbor_index]
                 edge_features = torch.concat([particle, neighbor - particle], dim=0)
                 particle_cloud[index_cloud] = self._mlp(edge_features)

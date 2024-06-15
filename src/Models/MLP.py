@@ -26,7 +26,7 @@ class MLP(keras.Model):
         self.third_relu = keras.layers.ReLU()
 
     def call(self, inputs):
-        """Evaluates the MLP in the set of inputs"""
+        """Evaluates the ModelFiles in the set of inputs"""
         # Layer 1
         output_first_layer = self.first_transf(inputs)
         output_first_layer = self.first_batch_norm(output_first_layer)

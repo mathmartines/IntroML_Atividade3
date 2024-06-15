@@ -8,8 +8,8 @@ from src.PyTorch.NN_ParticleCloud import ParticleCloud
 if __name__ == "__main__":
     device = "cpu"
 
-    higges_trainning = HiggsDataset("../Data/HiggsTrainning.csv", device)
-    higgs_validation = HiggsDataset("../Data/HiggsValidation.csv", device)
+    higges_trainning = HiggsDataset("../../Data/HiggsTrainning.csv", device)
+    higgs_validation = HiggsDataset("../../Data/HiggsValidation.csv", device)
 
     particle_cloud = ParticleCloud().to(device)
 

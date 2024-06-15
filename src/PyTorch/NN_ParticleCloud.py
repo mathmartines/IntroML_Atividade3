@@ -8,7 +8,7 @@ class ParticleCloud(nn.Module):
 
     def __init__(self):
         super().__init__()
-        # MLP to be used in the EdgeConv Layer
+        # ModelFiles to be used in the EdgeConv Layer
         self._mlp = nn.Sequential(
             # one layer with 12 input parameters (6 features per particle)
             nn.Linear(in_features=12, out_features=32),
