@@ -1,5 +1,5 @@
 """Evaluates the ROC curve and the AUC score for all the trainned models"""
-import numpy as np
+
 from sklearn.metrics import roc_curve, auc
 from src.utilities import load_data_for_mlp, load_data_as_set_of_particles
 import keras
@@ -22,8 +22,6 @@ def evaluate_model(model, X_test, y_test):
 
 
 if __name__ == "__main__":
-    # loading the models
-
     # MLP
     mlp_model = keras.models.load_model("../ModelFiles/MLP.keras")
     y_test_mlp, X_test_mlp, _ = load_data_for_mlp("../../Data/HiggsTest.csv")
@@ -46,8 +44,8 @@ if __name__ == "__main__":
     signal_eff_combined, fpr_combined = evaluate_model(combined, X_test, y_test)
 
     signal_efficiencies = {
-        "MLP": signal_eff_mlp,
         "PointNet": signal_eff_pn,
+        "MLP": signal_eff_mlp,
         "ParticleCloud": signal_eff_pc,
         "Combined": signal_eff_combined
     }

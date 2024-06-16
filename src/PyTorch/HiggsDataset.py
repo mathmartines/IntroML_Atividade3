@@ -58,7 +58,7 @@ class HiggsDataset(Dataset):
 
     @staticmethod
     def _construct_label(label_event):
-        event_label = torch.tensor([int(index == label_event) for index in range(2)])
+        event_label = torch.tensor([int(index == label_event) for index in range(1, -1, -1)])
         return event_label
 
     def _construct_lepton_features(self, event_info: np.ndarray):

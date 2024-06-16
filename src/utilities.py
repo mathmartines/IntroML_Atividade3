@@ -45,7 +45,7 @@ def load_data_for_mlp(filename):
     """Loads the data for the ModelFiles model"""
     data = pd.read_csv(filename, header=None).to_numpy()
     y, X = data[:, 0], data[:, 1:22]
-    y = np.array([[i == label for i in range(2)] for label in y], dtype=np.float32)
+    y = np.array([[i == label for i in range(1, -1, -1)] for label in y], dtype=np.float32)
     # returning the labels, the data, and all the high-level features
     return y, X, data[:, 22:]
 
