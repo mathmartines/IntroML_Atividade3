@@ -50,10 +50,10 @@ if __name__ == "__main__":
         "Combined": signal_eff_combined
     }
     background_eff = {
-        "MLP": back_miss_id_rate,
-        "PointNet": fpr_pn,
-        "ParticleCloud":  fpr_pc,
-        "Combined": fpr_combined
+        "MLP": 1 - back_miss_id_rate,
+        "PointNet": 1 - fpr_pn,
+        "ParticleCloud": 1 - fpr_pc,
+        "Combined": 1 - fpr_combined
     }
     labels = {
         "MLP": f"Multi-Layer Perceptron (AUC = {auc(back_miss_id_rate, signal_eff_mlp):.2f})",

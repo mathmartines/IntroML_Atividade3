@@ -26,7 +26,7 @@ if __name__ == "__main__":
     signal, background = separate_signal_and_background(inv_mass, y_test)
 
     # performing the prediction and fiding the threshold value for the given background rejection
-    model = keras.models.load_model("../ModelFiles/CombinedModel.keras")
+    model = keras.models.load_model("../ModelFiles/ParticleCloud.keras")
     # for the MLP
     # y_test, X_test, _ = load_data_for_mlp("../../Data/HiggsTest.csv")
     # for the other NN
@@ -60,16 +60,16 @@ if __name__ == "__main__":
     labels = {
         "signal": "Signal",
         "background": "Background",
-        "model_signal": "Point-Net + Particle Cloud Signal (rej=0.9)",
-        "model_background": "Point-Net + Particle Cloud Background (rej=0.9)"
+        "model_signal": "Particle Cloud Signal (rej=0.9)",
+        "model_background": "Particle Cloud Background (rej=0.9)"
     }
 
     invariant_mass_hist(
         events=histograms,
         labels=labels,
         colors=colors,
-        nbins=40,
+        nbins=np.arange(0, 3.1, 0.05),
         linestyle=linestyle,
-        title="Point-Net + Particle Cloud",
-        file_path="../../Plots/Mwwbb_PointNet_ParticleCloud.pdf"
+        title="Particle Cloud",
+        file_path="../../Plots/Mwwbb_ParticleCloud.pdf"
     )

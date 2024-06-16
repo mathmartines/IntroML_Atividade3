@@ -18,11 +18,11 @@ def plot_roc_curve(
     """Plots the roc curve for a list of classifiers"""
 
     for classifier in signal_eff:
-        plt.plot(background_eff[classifier], signal_eff[classifier], label=labels[classifier],
+        plt.plot(signal_eff[classifier], background_eff[classifier], label=labels[classifier],
                  color=colors[classifier])
-    plt.plot([0, 1], [0, 1], 'k--')
-    plt.xlabel(r"Background Efficiency ($\epsilon_b$)")
-    plt.ylabel(r"Signal Efficiency ($\epsilon_s$)")
+    plt.plot([0, 1], [1, 0], 'k--')
+    plt.ylabel(r"Background Rejection ($1 - \varepsilon_b$)")
+    plt.xlabel(r"Signal Efficiency ($\varepsilon_s$)")
     plt.xlim((0, 1))
     plt.ylim((0, 1))
     plt.tick_params(axis="both", which="minor", top=True, right=True, length=2, direction="in")
@@ -66,7 +66,7 @@ def invariant_mass_hist(events: Dict[str, np.ndarray], colors: Dict[str, str], l
             Line2D([0], [0], color=colors[hist_name], lw=2, label=labels[hist_name],
                    linestyle=linestyle[hist_name])
         )
-    plt.legend(handles=legend_list, loc="best", frameon=False, framealpha=1, fontsize="11", fancybox=False, ncols=1)
+    plt.legend(handles=legend_list, loc="best", frameon=False, framealpha=1, fontsize="10", fancybox=False, ncols=1)
     plt.tick_params(axis="both", which="minor", top=True, right=True, length=2, direction="in")
     plt.tick_params(axis="both", which="major", top=True, right=True, length=5, direction="in")
     plt.minorticks_on()
