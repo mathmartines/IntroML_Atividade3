@@ -4,8 +4,8 @@ import keras
 
 class PointNetLayer(tf.keras.layers.Layer):
     """
-    For each particle in the event, it evaluates the ModelFiles and returns the same particle
-    with a new set of features giveb by the output of the ModelFiles.
+    For each particle in the event, it evaluates the MLP and returns the same particle
+    with a new set of features given by the output of the MLP.
     """
 
     def __init__(self, mlp, mlp_output_dim, **kwargs):
@@ -28,7 +28,7 @@ class PointNetLayer(tf.keras.layers.Layer):
         # we need to reshape in a way that we only have a list of particles
         all_particles = tf.reshape(events, (number_of_particles_per_evt * number_of_evts, number_of_particles_features))
 
-        # now we need to apply the ModelFiles in all the particles
+        # now we need to apply the MLP in all the particles
         mlp_output = self._mlp(all_particles)
         # the last step is to reshape it again in the of (events, particles, output of the ModelFiles)
         return tf.reshape(mlp_output, (number_of_evts, number_of_particles_per_evt, self._mlp_output_dim))

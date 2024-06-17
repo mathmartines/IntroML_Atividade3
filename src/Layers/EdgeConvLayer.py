@@ -13,16 +13,21 @@ class EdgeConvLayer(tf.keras.layers.Layer):
                  mlp_output_dim,
                  k_neighbors: int, coord_index, **kwargs):
         super().__init__(**kwargs)
+        # number of neighbors we need to consider in each cloud
         self._k_neighbors = k_neighbors
+        # initial and final index coordinates in the particle feature vector
         self._initial_coord, self._final_coord = coord_index
+        # MLP that will be used as the edge function
         self._mlp = mlp
+        # number of output features for each particle
         self._mlp_output_dim = mlp_output_dim
 
     def call(self, events):
-        """Evaluates the ModelFiles in each edge of all particle clouds."""
+        """Evaluates the EdgeConv Layer in each edge for all possible particle clouds."""
         batch_size = tf.shape(events)[0]
         number_of_particles = tf.shape(events)[1]
         number_of_particles_features = tf.shape(events)[2]
+
         # getting the indices of each particle neighbor
         neighbors_indices = self.find_neighbors_indices(events)
 
@@ -33,11 +38,13 @@ class EdgeConvLayer(tf.keras.layers.Layer):
                                        [batch_size, number_of_particles, self._k_neighbors,
                                         number_of_particles_features])
         edge_features = tf.concat([central_particles, neighbors - central_particles], axis=-1)
-        # now we need to reshape it in a that's acceptable by the ModelFiles
+
+        # now we need to reshape it in a that's acceptable by the MLP
         total_edges = batch_size * number_of_particles * self._k_neighbors
         edge_features = tf.reshape(edge_features, [total_edges, 2 * number_of_particles_features])
-        # applying the ModelFiles to every edge
+        # applying the MLP to every edge
         mlp_output = self._mlp(edge_features)
+
         # reshape again into events as set of particles
         mlp_output = tf.reshape(mlp_output, [batch_size, number_of_particles, self._k_neighbors, self._mlp_output_dim])
 

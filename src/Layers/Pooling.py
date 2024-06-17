@@ -2,6 +2,7 @@ import tensorflow as tf
 
 
 class ChannelWiseGlobalAveragePooling(tf.keras.layers.Layer):
+    """Channel-wise average pooling over all particles or channels in the Particle-Cloud."""
 
     def call(self, events):
         """Returns the feature-wise avarage over all the particles in the event"""
